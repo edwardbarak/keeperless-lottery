@@ -5,7 +5,18 @@ contract Lottery {
     //VARIABLES
     bool internal locked; //Lock to prevent re-entry
 
-    address payable owner;
+    address payable public owner;
+
+    /*
+    struct lottery
+    uint public lottoDuration;
+    uint public currentLottery;
+    mapping(uint => ) public lotteries; //map uint => struct?
+    
+
+    
+    mapping(address => uint) public winnerWinnings;
+    */
 
     //EVENTS
 
@@ -29,7 +40,7 @@ contract Lottery {
     }
 
     //FUNCTIONS
-    function buyTicket() public payable noReentrant {
+    function buyTicket() external payable noReentrant {
         /*
         if lottery is active:
             transfer eth from msg.sender to contract
@@ -39,7 +50,7 @@ contract Lottery {
         */
     }
 
-    function withdrawWinnings() public payable noReentrant {
+    function withdrawWinnings() external payable noReentrant {
         /*
         if msg.sender has winnings:
             transfer all eth from contract to msg.sender
@@ -48,7 +59,7 @@ contract Lottery {
         */
     }
 
-    function withdrawFees() public payable noReentrant isOwner {
+    function withdrawFees() external payable noReentrant isOwner {
         /*
         if fees > 0:
             transfer all fees from contract to msg.sender
