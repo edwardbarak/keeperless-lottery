@@ -8,14 +8,11 @@ contract Lottery {
     address payable public owner;
 
     /*
-    struct lottery
-    uint public lottoDuration;
+    uint public lotteryDuration;
     uint public currentLottery;
-    mapping(uint => ) public lotteries; //map uint => struct?
     
-
-    
-    mapping(address => uint) public winnerWinnings;
+    mapping(address => uint) public winnerEarnings;
+    uint public ownerEarnings;
     */
 
     //EVENTS
@@ -42,7 +39,7 @@ contract Lottery {
     //FUNCTIONS
     function buyTicket() external payable noReentrant {
         /*
-        if lottery is active:
+        if lottery is active (block.timestamp > lotteryEnd):
             transfer eth from msg.sender to contract
             create ticket for msg.sender for the current lottery
         else:
