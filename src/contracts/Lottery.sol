@@ -34,13 +34,13 @@ contract Lottery {
     }
 
     //CONSTRUCTOR
-    constructor() {
+    constructor(uint256 _lotteryDuration, uint256 _ticketPrice) {
         owner = payable(msg.sender);
         locked = false;
         //start lottery
-        lotteryDuration = 3 minutes;
+        lotteryDuration = _lotteryDuration;
         lotteryEnd = block.timestamp + lotteryDuration;
-        ticketPrice = 1 ether;
+        ticketPrice = _ticketPrice;
     }
 
     //FUNCTIONS
