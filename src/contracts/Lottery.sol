@@ -7,13 +7,16 @@ contract Lottery {
 
     address payable public owner;
 
-    /*
-    uint public lotteryDuration;
-    uint public currentLottery;
-    
-    mapping(address => uint) public winnerEarnings;
-    uint public ownerEarnings;
-    */
+    uint256 public lotteryDuration;
+    uint256 public lotteryEnd;
+    uint256 public currentLottery;
+    uint256 public ticketPrice;
+    mapping(uint256 => address[]) public lotteryTickets;
+
+    uint256 public lotteryFee;
+
+    mapping(address => uint256) public winnerEarnings;
+    uint256 public ownerEarnings;
 
     //EVENTS
 
@@ -34,17 +37,17 @@ contract Lottery {
     constructor() {
         owner = payable(msg.sender);
         locked = false;
+        //start lottery
+        lotteryDuration = 3 minutes;
+        lotteryEnd = block.timestamp + lotteryDuration;
+        ticketPrice = 1 ether;
     }
 
     //FUNCTIONS
     function buyTicket() external payable noReentrant {
-        /*
-        if lottery is active (block.timestamp > lotteryEnd):
-            transfer eth from msg.sender to contract
-            create ticket for msg.sender for the current lottery
-        else:
-            error("lottery is not active")
-        */
+        require(block.timestamp < lotteryEnd);
+        require(msg.value == ticketPrice);
+        lotteryTickets[currentLottery].push(msg.sender);
     }
 
     function withdrawWinnings() external payable noReentrant {
