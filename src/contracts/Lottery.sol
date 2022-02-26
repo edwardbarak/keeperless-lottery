@@ -10,6 +10,7 @@ contract Lottery {
     uint256 public lotteryDuration;
     uint256 public lotteryEnd;
     uint256 public currentLottery;
+    uint256 public currentLotteryPot;
     uint256 public ticketPrice;
     mapping(uint256 => address[]) public lotteryTickets;
 
@@ -45,9 +46,11 @@ contract Lottery {
 
     //FUNCTIONS
     function buyTicket() external payable noReentrant {
-        require(block.timestamp < lotteryEnd);
         require(msg.value == ticketPrice);
+        if (block.timestamp > lotteryEnd) startNewLottery();
         lotteryTickets[currentLottery].push(msg.sender);
+        //TODO: pay fee to contract owner
+        //TODO: increment lottery pot
     }
 
     function withdrawWinnings() external payable noReentrant {
@@ -68,25 +71,27 @@ contract Lottery {
         */
     }
 
-    function startNewLottery() public isOwner noReentrant {
-        /*
-        if block.timestamp >= lotteryEnd:
-            selectCurrentLotteryWinner()
-            start new lottery 
-                currentLottery += 1
-                lotteryEnd = block.timestamp + lotteryLifetime
-        else:
-            error("current lottery has not ended yet")
-        */
+    function startNewLottery() internal {
+        require(block.timestamp > lotteryEnd);
+        selectCurrentLotteryWinner();
+        currentLottery += 1;
+        lotteryEnd = block.timestamp + lotteryDuration;
     }
 
     function selectCurrentLotteryWinner() internal {
-        /*
-        _randNum = select random number between 0 and tickets[currentLottery].length
-        winner = tickets[currentLottery][_randNum]
-        winners[winner] += currentLotteryPot
-        currentLotteryPot = 0
-        */
+        uint256 _randNum = uint256(
+            keccak256(abi.encodePacked(block.difficulty, block.timestamp))
+        ); //TODO: replace with chainlink VRF
+
+        uint256 _winningTicket = _randNum %
+            lotteryTickets[currentLottery].length;
+
+        address _winningAddress = lotteryTickets[currentLottery][
+            _winningTicket
+        ];
+
+        winnerEarnings[_winningAddress] += currentLotteryPot;
+        currentLotteryPot = 0;
     }
 
     function retireLotteryContract() public isOwner {
