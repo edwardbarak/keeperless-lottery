@@ -68,12 +68,8 @@ contract Lottery {
     }
 
     function withdrawFees() external payable noReentrant isOwner {
-        /*
-        if fees > 0:
-            transfer all fees from contract to msg.sender
-        else:
-            error("no claimable fees")
-        */
+        require(ownerEarnings > 0);
+        owner.transfer(ownerEarnings);
     }
 
     function startNewLottery() private {

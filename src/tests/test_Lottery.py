@@ -96,3 +96,16 @@ def test_buyTicket_selectCurrentLotteryWinner(lottery):
         account.address for account in accounts[:_numberOfTicketPurchasers]
     ]
     assert any([lottery.winnerEarnings(addr) > 0 for addr in _validWinners])
+
+
+def test_wtihdrawFees(lottery):
+    # test if owner can withdraw fees
+    # ARRANGE
+    _initialOwnerBalance = accounts[0].balance()
+
+    # ACT
+    lottery.buyTicket({"from": accounts[1], "value": lottery.ticketPrice()})
+    lottery.withdrawFees({"from": accounts[0]})
+
+    # ASSERT
+    assert accounts[0].balance() > _initialOwnerBalance
