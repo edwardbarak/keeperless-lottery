@@ -35,13 +35,18 @@ contract Lottery {
     }
 
     //CONSTRUCTOR
-    constructor(uint256 _lotteryDuration, uint256 _ticketPrice) {
+    constructor(
+        uint256 _lotteryDuration,
+        uint256 _ticketPrice,
+        uint256 _lotteryFee
+    ) {
         owner = payable(msg.sender);
         locked = false;
         //start lottery
         lotteryDuration = _lotteryDuration;
         lotteryEnd = block.timestamp + lotteryDuration;
         ticketPrice = _ticketPrice;
+        lotteryFee = _lotteryFee;
     }
 
     //FUNCTIONS
@@ -49,8 +54,8 @@ contract Lottery {
         require(msg.value == ticketPrice);
         if (block.timestamp > lotteryEnd) startNewLottery();
         lotteryTickets[currentLottery].push(msg.sender);
-        //TODO: pay fee to contract owner
-        //TODO: increment lottery pot
+        ownerEarnings += lotteryFee;
+        currentLotteryPot += ticketPrice - lotteryFee;
     }
 
     function withdrawWinnings() external payable noReentrant {
