@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 contract Lottery {
     //VARIABLES
-    bool internal locked; //Lock to prevent re-entry
+    bool private locked; //Lock to prevent re-entry
 
     address payable public owner;
 
@@ -71,14 +71,14 @@ contract Lottery {
         */
     }
 
-    function startNewLottery() internal {
+    function startNewLottery() private {
         require(block.timestamp > lotteryEnd);
         selectCurrentLotteryWinner();
         currentLottery += 1;
         lotteryEnd = block.timestamp + lotteryDuration;
     }
 
-    function selectCurrentLotteryWinner() internal {
+    function selectCurrentLotteryWinner() private {
         uint256 _randNum = uint256(
             keccak256(abi.encodePacked(block.difficulty, block.timestamp))
         ); //TODO: replace with chainlink VRF
