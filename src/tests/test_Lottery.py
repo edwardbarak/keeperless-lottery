@@ -7,7 +7,7 @@ _lotteryDuration = 3 * 60  # seconds
 
 @pytest.fixture
 def lottery():
-    return deploy_lottery(_lotteryDuration, Wei("0.01 ether"))
+    return deploy_lottery(_lotteryDuration, Wei("0.01 ether"), Wei("0.0005 ether"))
 
 
 # test if contract is owned by deployer
@@ -80,8 +80,19 @@ def test_buyTicket_startNewLottery_noPreviousTickets(lottery):
     assert lottery.currentLottery() > 0
 
 
-# def test_buyTicket_selectCurrentLotteryWinner(lottery):
-# test if selectCurrentLotteryWinner() selects a valid winner
-# ARRANGE
-# ACT
-# ASSERT
+def test_buyTicket_selectCurrentLotteryWinner(lottery):
+    # test if selectCurrentLotteryWinner() selects a valid winner
+    # ARRANGE
+    _numberOfTicketPurchasers = 4
+
+    # ACT
+    for i in range(_numberOfTicketPurchasers):
+        lottery.buyTicket({"from": accounts[i], "value": lottery.ticketPrice()})
+    chain.sleep(_lotteryDuration * 2)
+    lottery.buyTicket({"from": accounts[1], "value": lottery.ticketPrice()})
+
+    # ASSERT
+    _validWinners = [
+        account.address for account in accounts[:_numberOfTicketPurchasers]
+    ]
+    assert any([lottery.winnerEarnings(addr) > 0 for addr in _validWinners])
