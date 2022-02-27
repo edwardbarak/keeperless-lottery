@@ -73,7 +73,8 @@ contract Lottery {
 
     function startNewLottery() private {
         require(block.timestamp > lotteryEnd);
-        selectCurrentLotteryWinner();
+        if (lotteryTickets[currentLottery].length > 0)
+            selectCurrentLotteryWinner();
         currentLottery += 1;
         lotteryEnd = block.timestamp + lotteryDuration;
     }
