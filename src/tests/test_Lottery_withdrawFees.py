@@ -14,3 +14,4 @@ def test_withdrawFees(lottery):
 
     # ASSERT
     assert accounts[0].balance() > _initialOwnerBalance
+    assert lottery.ownerEarnings() == 0
