@@ -1,4 +1,4 @@
-from brownie import accounts, Wei, Lottery
+from brownie import exceptions, accounts, Wei, Lottery
 from scripts.deploy import deploy_lottery
 import pytest
 
@@ -30,11 +30,26 @@ def test_buyTicket(lottery):
     assert lottery.balance() == initialContractBalance + lottery.ticketPrice()
 
 
-# def test_buyTicket_incorrectTicketPrice(lottery):
-# test if contract rejects ticket purchase if the incorrect amount of ETH is sent
+def test_buyTicket_incorrectTicketPrice(lottery):
+    # test if contract rejects ticket purchase if the incorrect amount of ETH is sent
+    # ACT
+    with pytest.raises(Exception) as e:
+        lottery.buyTicket(
+            {"from": accounts[1], "value": lottery.ticketPrice() - Wei("0.01 ether")}
+        )
+
+    # ASSERT
+    assert e.typename == "VirtualMachineError"
+
 
 # def test_buyTicket_startNewLottery(lottery):
 # test if buying a new ticket after the first lottery initiates a new lottery
+# ARRANGE
+# ACT
+# ASSERT
 
 # def test_buyTicket_selectCurrentLotteryWinner(lottery):
 # test if selectCurrentLotteryWinner() selects a valid winner
+# ARRANGE
+# ACT
+# ASSERT
