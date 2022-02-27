@@ -2,7 +2,7 @@ from brownie import accounts, Wei, Lottery
 from scripts.deploy import deploy_lottery
 import pytest
 
-_lotteryDuration = 3 * 60
+_lotteryDuration = 3 * 60  # seconds
 
 
 @pytest.fixture
@@ -26,5 +26,15 @@ def test_buyTicket(lottery):
     # assert that purchaser owns a ticket
     assert lottery.lotteryTickets(lottery.currentLottery(), 0) == accounts[1]
 
-    # assert that contract received eth for the ticket
+    # assert that contract received the correct amount of eth for the ticket
     assert lottery.balance() == initialContractBalance + lottery.ticketPrice()
+
+
+# def test_buyTicket_incorrectTicketPrice(lottery):
+# test if contract rejects ticket purchase if the incorrect amount of ETH is sent
+
+# def test_buyTicket_startNewLottery(lottery):
+# test if buying a new ticket after the first lottery initiates a new lottery
+
+# def test_buyTicket_selectCurrentLotteryWinner(lottery):
+# test if selectCurrentLotteryWinner() selects a valid winner
