@@ -98,7 +98,7 @@ def test_buyTicket_selectCurrentLotteryWinner(lottery):
     assert any([lottery.winnerEarnings(addr) > 0 for addr in _validWinners])
 
 
-def test_wtihdrawFees(lottery):
+def test_withdrawFees(lottery):
     # test if owner can withdraw fees
     # ARRANGE
     _initialOwnerBalance = accounts[0].balance()
