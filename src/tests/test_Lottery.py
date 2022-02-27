@@ -42,7 +42,20 @@ def test_buyTicket_incorrectTicketPrice(lottery):
     assert e.typename == "VirtualMachineError"
 
 
-# def test_buyTicket_multipleTickets(lottery):
+def test_buyTicket_multipleTickets(lottery):
+    # test if multiple tickets can be purchased for a lottery
+    # ARRANGE / ACT
+    for i in range(1, 4):
+        lottery.buyTicket({"from": accounts[i], "value": lottery.ticketPrice()})
+    lottery.buyTicket({"from": accounts[1], "value": lottery.ticketPrice()})
+
+    # ASSERT
+    for i in range(0, 3):
+        assert (
+            lottery.lotteryTickets(lottery.currentLottery(), i)
+            == accounts[i + 1].address
+        )
+    assert lottery.lotteryTickets(lottery.currentLottery(), 3) == accounts[1].address
 
 
 def test_buyTicket_startNewLottery(lottery):
