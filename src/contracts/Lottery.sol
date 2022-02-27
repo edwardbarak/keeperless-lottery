@@ -59,17 +59,15 @@ contract Lottery {
     }
 
     function withdrawWinnings() external payable noReentrant {
-        /*
-        if msg.sender has winnings:
-            transfer all eth from contract to msg.sender
-        else:
-            error("no claimable winnings")
-        */
+        require(winnerEarnings[msg.sender] > 0);
+        payable(msg.sender).transfer(winnerEarnings[msg.sender]);
+        winnerEarnings[msg.sender] = 0;
     }
 
     function withdrawFees() external payable noReentrant isOwner {
         require(ownerEarnings > 0);
         owner.transfer(ownerEarnings);
+        ownerEarnings = 0;
     }
 
     function startNewLottery() private {
