@@ -1,4 +1,4 @@
-from brownie import exceptions, accounts, Wei, Lottery
+from brownie import chain, exceptions, accounts, Wei, Lottery
 from scripts.deploy import deploy_lottery
 import pytest
 
@@ -32,7 +32,7 @@ def test_buyTicket(lottery):
 
 def test_buyTicket_incorrectTicketPrice(lottery):
     # test if contract rejects ticket purchase if the incorrect amount of ETH is sent
-    # ACT
+    # ARRANGE / ACT
     with pytest.raises(Exception) as e:
         lottery.buyTicket(
             {"from": accounts[1], "value": lottery.ticketPrice() - Wei("0.01 ether")}
@@ -42,11 +42,24 @@ def test_buyTicket_incorrectTicketPrice(lottery):
     assert e.typename == "VirtualMachineError"
 
 
-# def test_buyTicket_startNewLottery(lottery):
-# test if buying a new ticket after the first lottery initiates a new lottery
-# ARRANGE
-# ACT
-# ASSERT
+# def test_buyTicket_multipleTickets(lottery):
+
+
+def test_buyTicket_startNewLottery(lottery):
+    # test if buying a new ticket after the first lottery initiates a new lottery
+    # ARRANGE / ACT
+    lottery.buyTicket({"from": accounts[1], "value": lottery.ticketPrice()})
+    chain.sleep(_lotteryDuration * 2)
+    lottery.buyTicket({"from": accounts[2], "value": lottery.ticketPrice()})
+
+    # ASSERT
+    assert lottery.currentLottery() > 0
+    assert lottery.lotteryTickets(0, 0) == accounts[1]
+    assert lottery.lotteryTickets(lottery.currentLottery(), 0) == accounts[2]
+
+
+# def test_buyTicket_startNewLottery_noPreviousTickets(lottery):
+# test if a new lottery is properly started if there were no tickets purchased in the previous lottery
 
 # def test_buyTicket_selectCurrentLotteryWinner(lottery):
 # test if selectCurrentLotteryWinner() selects a valid winner
