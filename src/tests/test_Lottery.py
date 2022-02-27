@@ -71,8 +71,14 @@ def test_buyTicket_startNewLottery(lottery):
     assert lottery.lotteryTickets(lottery.currentLottery(), 0) == accounts[2]
 
 
-# def test_buyTicket_startNewLottery_noPreviousTickets(lottery):
-# test if a new lottery is properly started if there were no tickets purchased in the previous lottery
+def test_buyTicket_startNewLottery_noPreviousTickets(lottery):
+    # test if a new lottery is properly started if there were no tickets purchased in the previous lottery
+    # ARRANGE / ACT
+    chain.sleep(_lotteryDuration * 2)
+    lottery.buyTicket({"from": accounts[1], "value": lottery.ticketPrice()})
+    # ASSERT
+    assert lottery.currentLottery() > 0
+
 
 # def test_buyTicket_selectCurrentLotteryWinner(lottery):
 # test if selectCurrentLotteryWinner() selects a valid winner
