@@ -1,16 +1,22 @@
 from brownie import accounts, Wei, Lottery
 from scripts.deploy import deploy_lottery
+import pytest
+
+_lotteryDuration = 3 * 60
+
+
+@pytest.fixture
+def lottery():
+    return deploy_lottery(_lotteryDuration, Wei("0.01 ether"))
 
 
 # test if contract is owned by deployer
-def test_correct_owner():
-    lottery = deploy_lottery(3 * 60, Wei("0.01 ether"))
+def test_correct_owner(lottery):
     assert lottery.owner() == accounts[0]
 
 
-def test_buyTicket():
+def test_buyTicket(lottery):
     # ARRANGE
-    lottery = deploy_lottery(3 * 60, Wei("0.01 ether"))
     initialContractBalance = lottery.balance()
 
     # ACT
